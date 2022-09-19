@@ -1,8 +1,12 @@
-import 'package:bloc/bloc.dart';
-import 'package:restaurant_booking_app/src/bloc/authentication/authentication_event.dart';
+import 'dart:async';
 
-import '../../repositories/user_repository.dart';
-import 'authentication_state.dart';
+import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:restaurant_booking_app/src/model/user.dart';
+import 'package:restaurant_booking_app/src/repositories/user_repository.dart';
+
+part 'authentication_event.dart';
+part 'authentication_state.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
@@ -12,24 +16,22 @@ class AuthenticationBloc
         super(AuthenticationInitial());
 
   Stream<AuthenticationState> mapEventToState(AuthenticationEvent event) async*{
-    if(event is AppLoaded){
+    if(event is AppStarted){
       yield* _mapAppLoadedToState(event);
     }
     if(event is UserLoggedIn){
       yield* _mapUserLoggedInToState(event);
-
     }
     if(event is UserLoggedOut){
       yield* _mapUserLoggedOutToState(event);
-
     }
   }
 
-  Stream<AuthenticationState> _mapAppLoadedToState(AppLoaded event) async* {
+  Stream<AuthenticationState> _mapAppLoadedToState(AppStarted event) async* {
     yield AuthenticationLoading();
     try {
       await Future.delayed(const Duration(milliseconds: 500)); // a simulated delay
-      final currentUser = await _userRepository.getUser();
+      final currentUser = await _userRepository.getAuthUser();
 
       if (currentUser != null) {
         yield AuthenticationAuthenticated(user: currentUser);

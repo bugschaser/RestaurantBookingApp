@@ -1,9 +1,6 @@
+part of 'authentication_bloc.dart';
 
-import 'package:equatable/equatable.dart';
-
-import '../../model/user.dart';
-
-abstract class AuthenticationState extends Equatable{
+abstract class AuthenticationState extends Equatable {
   const AuthenticationState();
 
   @override

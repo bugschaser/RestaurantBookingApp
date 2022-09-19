@@ -5,9 +5,10 @@ import '../theme/app_theme.dart';
 class FormCustomTextField extends StatelessWidget {
   final TextEditingController textEditingController;
   final String? Function(String?)? validator;
+  final String? Function(String?)? onSubmit;
 
   const FormCustomTextField({Key? key,
-    required this.textEditingController, this.validator}) : super(key: key);
+    required this.textEditingController, this.validator, this.onSubmit}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +36,7 @@ class FormCustomTextField extends StatelessWidget {
           ),
         ),
       validator: validator,
+      onFieldSubmitted: onSubmit,
       );
   }
 }
