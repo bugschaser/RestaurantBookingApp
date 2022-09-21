@@ -1,13 +1,13 @@
-class User {
+class UserModel {
   final String userID;
   final String name;
   final String profilePic;
   final String email;
 
-  User( {required this.name, required this.email,required this.userID, this.profilePic='',});
+  UserModel( {required this.name, required this.email,required this.userID, this.profilePic='',});
 
-  factory User.fromJson(Map<String ,dynamic> jsonObject){
-    return User(
+  factory UserModel.fromJson(Map<String ,dynamic> jsonObject){
+    return UserModel(
         userID: jsonObject["uid"],
         name: jsonObject["name"],
         email: jsonObject["email"],

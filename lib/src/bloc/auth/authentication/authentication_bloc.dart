@@ -13,41 +13,39 @@ class AuthenticationBloc
   final UserRepository _userRepository;
   AuthenticationBloc({required UserRepository userRepository})
       : _userRepository = userRepository,
-        super(AuthenticationInitial());
+        super(AuthenticationInitial()) {
+    on<AuthenticationEvent>((event, emit) async {
+      // TODO: implement event handler
+      if (event is AppStarted) {
+        emit(AuthenticationLoading());
+        try{
+          // a simulated delay
+          await Future.delayed(const Duration(milliseconds: 500)); // a simulated delay
+          final currentUser = await _userRepository.getAuthUser();
 
-  Stream<AuthenticationState> mapEventToState(AuthenticationEvent event) async*{
-    if(event is AppStarted){
-      yield* _mapAppLoadedToState(event);
-    }
-    if(event is UserLoggedIn){
-      yield* _mapUserLoggedInToState(event);
-    }
-    if(event is UserLoggedOut){
-      yield* _mapUserLoggedOutToState(event);
-    }
-  }
+          if (currentUser != null) {
+            add(UserLoggedIn(user: currentUser));
+          } else {
+            emit(AuthenticationNotAuthenticated());
+          }
 
-  Stream<AuthenticationState> _mapAppLoadedToState(AppStarted event) async* {
-    yield AuthenticationLoading();
-    try {
-      await Future.delayed(const Duration(milliseconds: 500)); // a simulated delay
-      final currentUser = await _userRepository.getAuthUser();
-
-      if (currentUser != null) {
-        yield AuthenticationAuthenticated(user: currentUser);
-      } else {
-        yield AuthenticationNotAuthenticated();
+        }catch(e){
+          emit(AuthenticationFailure(message: e.toString()));
+        }
+        // emit(AuthenticationInitial());
       }
-    } catch (e) {
-      yield AuthenticationFailure(message: e.toString());
-    }
+      if(event is UserLoggedIn){
+        emit(AuthenticationAuthenticated(user: event.user));
+      }
 
+      if(event is UserLoggedOut){
+        await _userRepository.signOut();
+        emit(AuthenticationNotAuthenticated());
+      }
+
+    });
   }
-  Stream<AuthenticationState> _mapUserLoggedInToState(UserLoggedIn event) async* {
-    yield AuthenticationAuthenticated(user: event.user);
-  }
-  Stream<AuthenticationState> _mapUserLoggedOutToState(UserLoggedOut event) async* {
-    await _userRepository.signOut();
-    yield AuthenticationNotAuthenticated();
-  }
+
+
+
 }

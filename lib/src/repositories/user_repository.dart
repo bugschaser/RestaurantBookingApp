@@ -14,34 +14,34 @@ class UserRepository{
   final FirebaseAuth _firebaseAuth;
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  Future<String?> createNewUser(UserModel.User user) async => await firestore
+  Future<String?> createNewUser(UserModel.UserModel user) async => await firestore
       .collection(Constant.USERS)
       .doc(user.userID)
       .set(user.toJson())
       .then((value) => null, onError: (e) => e);
 
-  Future<UserModel.User?> getAuthUser() async {
+  Future<UserModel.UserModel?> getAuthUser() async {
     User? firebaseUser = _firebaseAuth.currentUser;
     if (firebaseUser != null) {
-      UserModel.User? user = await getCurrentUser(firebaseUser.uid);
+      UserModel.UserModel? user = await getCurrentUser(firebaseUser.uid);
       return user;
     } else {
       return null;
     }
   }
 
-  Future<UserModel.User?> getCurrentUser(String uid) async {
+  Future<UserModel.UserModel?> getCurrentUser(String uid) async {
     DocumentSnapshot<Map<String, dynamic>> userDocument = await
       firestore.collection(Constant.USERS).doc(uid).get();
     if(userDocument.exists && userDocument.data() != null){
-      return UserModel.User.fromJson(userDocument.data()!);
+      return UserModel.UserModel.fromJson(userDocument.data()!);
     }
     else{
       return null;
     }
   }
 
-  Future<UserModel.User> updateCurrentUser(UserModel.User user) async {
+  Future<UserModel.UserModel> updateCurrentUser(UserModel.UserModel user) async {
     return await firestore
         .collection(Constant.USERS)
         .doc(user.userID)
@@ -61,7 +61,7 @@ class UserRepository{
        await _firebaseAuth.createUserWithEmailAndPassword(email: email,
            password: password );
 
-       UserModel.User user = UserModel.User(name: name, email: email,
+       UserModel.UserModel user = UserModel.UserModel(name: name, email: email,
            userID: userCredential.user?.uid ?? '',profilePic: '' );
 
        String? result = await createNewUser(user);
@@ -89,9 +89,9 @@ class UserRepository{
           email: email, password: password );
       DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await
         firestore.collection(Constant.USERS).doc(result.user?.uid ?? '').get();
-      UserModel.User? user;
+      UserModel.UserModel? user;
       if (documentSnapshot.exists) {
-        user = UserModel.User.fromJson(documentSnapshot.data() ?? {});
+        user = UserModel.UserModel.fromJson(documentSnapshot.data() ?? {});
         return user;
       }
       else{
@@ -126,13 +126,13 @@ class UserRepository{
       UserCredential userCredential = await _firebaseAuth.signInWithCredential(
         FacebookAuthProvider.credential(accessToken.token)
       );
-      UserModel.User? user = await getCurrentUser(userCredential.user?.uid ?? '');
+      UserModel.UserModel? user = await getCurrentUser(userCredential.user?.uid ?? '');
       if(user != null){
         return user;
       }
       else{
         Map<String, dynamic> userData = await facebookAuth.getUserData();
-        UserModel.User userModel = UserModel.User(name: userData['name'] as String,
+        UserModel.UserModel userModel = UserModel.UserModel(name: userData['name'] as String,
             email: userData['email'] as String,
             userID: userCredential.user?.uid ?? '',
             profilePic: userData['picture']['data']['url']
@@ -165,13 +165,13 @@ class UserRepository{
       UserCredential userCredential = await
       FirebaseAuth.instance.signInWithCredential(credential);
 
-      UserModel.User? currentUser = await getCurrentUser(userCredential.user?.uid ?? '');
+      UserModel.UserModel? currentUser = await getCurrentUser(userCredential.user?.uid ?? '');
 
       if(currentUser != null){
         return currentUser;
       }
       else{
-        UserModel.User user = UserModel.User(
+        UserModel.UserModel user = UserModel.UserModel(
           userID: userCredential.user?.uid ?? '',
           name: userCredential.user?.displayName ?? '',
           email: userCredential.user?.email ?? '',
@@ -202,7 +202,7 @@ class UserRepository{
         phoneNumber: phoneNumber,
         verificationCompleted: (PhoneAuthCredential authCredential) async {
           UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(authCredential);
-          UserModel.User? currentUser = await getCurrentUser(userCredential.user?.uid ?? '');
+          UserModel.UserModel? currentUser = await getCurrentUser(userCredential.user?.uid ?? '');
 
         },
         verificationFailed: (FirebaseAuthException e) {

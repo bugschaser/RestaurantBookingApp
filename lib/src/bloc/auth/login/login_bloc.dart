@@ -1,12 +1,10 @@
-import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:restaurant_booking_app/src/model/user.dart';
 import 'package:restaurant_booking_app/src/repositories/user_repository.dart';
 import 'package:restaurant_booking_app/src/utils/constant.dart';
 
-part 'login_event.dart';
-part 'login_state.dart';
+import 'login_event.dart';
+import 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
@@ -41,7 +39,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
     if(event is RememberMeUpdated){
       yield state.copyWith(
-        isRememberMeChecked: event.rememberMe
+          isRememberMeChecked: event.rememberMe
       );
     }
 
@@ -67,29 +65,29 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   _mapFormSubmittedToState(LoginSubmitted event) async {
     LoginState.loading();
     if(state.isFormValid){
-       dynamic result = await _userRepository.signInWithEmail(email: state.email,
-            password: state.password);
-       if(result is User){
-         state.copyWith(
-           isLoading: false,
-           isFormValid: true,
-           isFormValidateFailed: false,
-           isFormValidateSuccessful: true
-         );
-       }
-       else if(result is String){
-         state.copyWith(
-             isLoading: false,
-             errorMessage: result,
-             isFormValid: false,
-             isFormValidateFailed: true
-         );
-       }
+      dynamic result = await _userRepository.signInWithEmail(email: state.email,
+          password: state.password);
+      if(result is UserModel){
+        state.copyWith(
+            isLoading: false,
+            isFormValid: true,
+            isFormValidateFailed: false,
+            isFormValidateSuccessful: true
+        );
+      }
+      else if(result is String){
+        state.copyWith(
+            isLoading: false,
+            errorMessage: result,
+            isFormValid: false,
+            isFormValidateFailed: true
+        );
+      }
     }else{
       state.copyWith(
-          isLoading: false,
-          isFormValid: false,
-          isFormValidateFailed: true,
+        isLoading: false,
+        isFormValid: false,
+        isFormValidateFailed: true,
       );
     }
   }
@@ -97,7 +95,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   _mapGoogleLoginSubmittedToState(GoogleLoginSubmitted event) async {
     LoginState.loading();
     dynamic result = await _userRepository.signInWithGoogle();
-    if(result is User){
+    if(result is UserModel){
       state.copyWith(
           isLoading: false,
           isFormValid: true,
@@ -117,7 +115,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   _mapFacebookLoginSubmittedToState(FacebookLoginSubmitted event) async {
     dynamic result = await _userRepository.signInWithFacebook();
-    if(result is User){
+    if(result is UserModel){
       state.copyWith(
           isLoading: false,
           isFormValid: true,

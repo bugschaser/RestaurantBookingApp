@@ -14,7 +14,7 @@ class AuthenticationLoading extends AuthenticationState {}
 class AuthenticationNotAuthenticated extends AuthenticationState {}
 
 class AuthenticationAuthenticated extends AuthenticationState {
-  final User user;
+  final UserModel user;
 
   const AuthenticationAuthenticated({required this.user});
 

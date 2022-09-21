@@ -21,8 +21,7 @@ Future<void> main() async {
     child: Builder(builder: (context) {
       return BlocProvider(
         create: (context) => AuthenticationBloc(
-            userRepository: RepositoryProvider.of<UserRepository>(context))
-          ..add(AppStarted()),
+            userRepository: RepositoryProvider.of<UserRepository>(context))..add(AppStarted()),
         child: const MyApp(),
       );
     }),
@@ -49,32 +48,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return  MaterialApp(
       title: Constant.appName,
       debugShowCheckedModeBanner: false,
-      home: BlocNavigation(),
-    );
-  }
-}
+      home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
 
-class BlocNavigation extends StatelessWidget {
-  const BlocNavigation({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
-      builder: (context, state) {
-        if(state is AuthenticationLoading){
-          return const CircularProgressIndicator();
-        }
-        if(state is AuthenticationAuthenticated){
-          return const LoginForm();
-        }
-        if(state is AuthenticationNotAuthenticated){
-          return const HomeScreen();
-        }
-        return const LoginForm();
-      },
+          return (state is AuthenticationAuthenticated)? const HomeScreen() : const LoginForm();
+        },
+      ),
     );
   }
 }

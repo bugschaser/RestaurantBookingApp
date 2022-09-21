@@ -12,7 +12,7 @@ class AppStarted extends AuthenticationEvent{}
 
 // Fired when a user has successfully logged in
 class UserLoggedIn extends AuthenticationEvent{
-  final User user;
+  final UserModel user;
   const UserLoggedIn({required this.user});
   @override
   List<Object> get props => [user];
