@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:restaurant_booking_app/src/bloc/auth/form_validation/form_validation_bloc.dart';
+import 'package:restaurant_booking_app/src/bloc/auth/login/login_bloc.dart';
 import 'package:restaurant_booking_app/src/repositories/user_repository.dart';
 import 'dart:ui' as ui show PlaceholderAlignment;
 
@@ -19,7 +19,7 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-  final _formKey = GlobalKey<FormState>();
+  final _loginFormKey = GlobalKey<FormState>();
   final _emailTextEditingController = TextEditingController();
   final _passwordTextEditingController = TextEditingController();
   bool _isRememberMe = false;
@@ -30,7 +30,7 @@ class _LoginFormState extends State<LoginForm> {
       backgroundColor: AppColor.lightBackgroundColor,
       body: SafeArea(
         child: BlocProvider(
-          create: (context) => FormValidationBloc(
+          create: (context) => LoginBloc(
               userRepository: RepositoryProvider.of<UserRepository>(context)),
           child: Column(
             children: [
@@ -41,12 +41,12 @@ class _LoginFormState extends State<LoginForm> {
                   child: SingleChildScrollView(
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height - 100,
-                  child: BlocListener<FormValidationBloc, FormValidationState>(
+                  child: BlocListener<LoginBloc, LoginState>(
                     listener: (context, state) {
                       // TODO: implement listener
                       if (state.errorMessage.isNotEmpty) {
                       } else if (state.isFormValid && !state.isLoading) {
-                        context.read<FormValidationBloc>().add(FormSucceed());
+                        context.read<LoginBloc>().add(FormSucceed());
                       } else if (state.isFormValidateFailed) {
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -66,7 +66,7 @@ class _LoginFormState extends State<LoginForm> {
                                 color: AppColor.lightBlueColor,
                                 borderRadius: BorderRadius.circular(15)),
                             child: Form(
-                              key: _formKey,
+                              key: _loginFormKey,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -94,8 +94,8 @@ class _LoginFormState extends State<LoginForm> {
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  BlocBuilder<FormValidationBloc,
-                                      FormValidationState>(
+                                  BlocBuilder<LoginBloc,
+                                      LoginState>(
                                     buildWhen: (previous, current) =>
                                         previous.email != current.email,
                                     builder: (context, state) {
@@ -104,7 +104,7 @@ class _LoginFormState extends State<LoginForm> {
                                             _emailTextEditingController,
                                         onChange: (emailValue) {
                                           context
-                                              .read<FormValidationBloc>()
+                                              .read<LoginBloc>()
                                               .add(EmailChanged(
                                                   email: emailValue ?? ''));
                                         },
@@ -131,21 +131,21 @@ class _LoginFormState extends State<LoginForm> {
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  BlocBuilder<FormValidationBloc,
-                                      FormValidationState>(
+                                  BlocBuilder<LoginBloc,
+                                      LoginState>(
                                     builder: (context, state) {
                                       return FormCustomTextField(
                                         textEditingController:
                                             _passwordTextEditingController,
                                         onChange: (password) {
                                           context
-                                              .read<FormValidationBloc>()
+                                              .read<LoginBloc>()
                                               .add(PasswordChanged(
                                                   password: password ?? ''));
                                         },
                                         validator: (email) {
                                           if (!state.isPasswordValid) {
-                                            return "Password length must have at least 8 characters. ";
+                                            return "Password length must have at least 8 characters.";
                                           }
                                           return null;
                                         },

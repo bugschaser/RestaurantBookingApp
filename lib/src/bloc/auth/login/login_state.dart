@@ -1,6 +1,6 @@
-part of 'form_validation_bloc.dart';
+part of 'login_bloc.dart';
 
-class FormValidationState extends Equatable {
+class LoginState extends Equatable {
   final String name;
   final String email;
   final String password;
@@ -13,7 +13,7 @@ class FormValidationState extends Equatable {
   final bool isFormValidateFailed;
   final bool isFormValidateSuccessful;
 
-  const FormValidationState({
+  const LoginState({
     this.name = '',
     this.email = '',
     this.password = '',
@@ -27,7 +27,7 @@ class FormValidationState extends Equatable {
     this.isFormValidateSuccessful = true,
   });
 
-  FormValidationState copyWith(
+  LoginState copyWith(
       {String? name,
         String? email,
         String? password,
@@ -39,7 +39,7 @@ class FormValidationState extends Equatable {
         String? errorMessage,
         bool? isFormValidateFailed,
         bool? isFormValidateSuccessful}) {
-    return FormValidationState(
+    return LoginState(
         name: name ?? this.name,
         email: email ?? this.email,
         password: password ?? this.password,
@@ -54,8 +54,8 @@ class FormValidationState extends Equatable {
         isFormValidateSuccessful ?? this.isFormValidateSuccessful);
   }
 
-  factory FormValidationState.loading() {
-    return const FormValidationState().copyWith(
+  factory LoginState.loading() {
+    return const LoginState().copyWith(
         isEmailValid: true,
         isPasswordValid: true,
         isFormValid: true,

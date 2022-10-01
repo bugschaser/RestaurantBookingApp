@@ -2,21 +2,21 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:restaurant_booking_app/src/model/user.dart';
 import 'package:restaurant_booking_app/src/repositories/user_repository.dart';
-import 'package:restaurant_booking_app/src/utils/constant.dart';
+import 'package:restaurant_booking_app/src/utils/utils.dart';
 
-part 'form_validation_event.dart';
-part 'form_validation_state.dart';
+part 'login_event.dart';
+part 'login_state.dart';
 
-class FormValidationBloc extends Bloc<FormValidationEvent, FormValidationState> {
+class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final UserRepository _userRepository;
-  FormValidationBloc({required UserRepository userRepository})
-      : _userRepository = userRepository, super(const FormValidationState()) {
-    on<FormValidationEvent>((event, emit) async {
+  LoginBloc({required UserRepository userRepository})
+      : _userRepository = userRepository, super(const LoginState()) {
+    on<LoginEvent>((event, emit) async {
       // TODO: implement event handler
       if(event is EmailChanged){
          emit(state.copyWith(
           email: event.email,
-          isEmailValid: _isEmailValid(event.email),
+          isEmailValid: Utils.isEmailValid(event.email),
           isFormValidateSuccessful: false,
           isFormValid: false,
           isFormValidateFailed: false,
@@ -26,7 +26,7 @@ class FormValidationBloc extends Bloc<FormValidationEvent, FormValidationState> 
       if(event is PasswordChanged){
         emit(state.copyWith(
           password: event.password,
-          isPasswordValid: _isPasswordValid(event.password),
+          isPasswordValid: Utils.isPasswordValid(event.password),
           isFormValidateSuccessful: false,
           isFormValid: false,
           isFormValidateFailed: false,
@@ -68,6 +68,7 @@ class FormValidationBloc extends Bloc<FormValidationEvent, FormValidationState> 
           ));
         }
       }
+
       if(event is GoogleButtonSubmitted){
         LoginState.loading();
         dynamic result = await _userRepository.signInWithGoogle();
@@ -113,12 +114,5 @@ class FormValidationBloc extends Bloc<FormValidationEvent, FormValidationState> 
     });
   }
 
-
-  bool _isEmailValid(String email) {
-    return Constant.emailRegExp.hasMatch(email);
-  }
-  bool _isPasswordValid(String password) {
-    return Constant.passwordRegExp.hasMatch(password);
-  }
 
 }

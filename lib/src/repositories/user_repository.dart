@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 // ignore: library_prefixes
@@ -14,11 +15,13 @@ class UserRepository{
   final FirebaseAuth _firebaseAuth;
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  Future<String?> createNewUser(UserModel.UserModel user) async => await firestore
+  Future<String?> createNewUser(UserModel.UserModel user) async {
+    return await firestore
       .collection(Constant.USERS)
       .doc(user.userID)
       .set(user.toJson())
       .then((value) => null, onError: (e) => e);
+  }
 
   Future<UserModel.UserModel?> getAuthUser() async {
     User? firebaseUser = _firebaseAuth.currentUser;
@@ -51,7 +54,7 @@ class UserRepository{
     });
   }
 
-  Future<String?> createUserWithEmail({required String email,
+  Future<dynamic> createUserWithEmail({required String email,
     required String password,
     File? image,
     name = 'Anonymous User'
@@ -62,14 +65,14 @@ class UserRepository{
            password: password );
 
        UserModel.UserModel user = UserModel.UserModel(name: name, email: email,
-           userID: userCredential.user?.uid ?? '',profilePic: '' );
+           userID:userCredential.user?.uid ?? '0',profilePic: '' );
 
        String? result = await createNewUser(user);
 
        if(result != null){
-         return 'User signed up successfully.';
+         return user;
        }
-       
+
      } on FirebaseAuthException catch (e) {
        if (e.code == 'weak-password') {
          return('The password provided is too weak.');
@@ -77,6 +80,9 @@ class UserRepository{
          return('The account already exists for that email.');
        }
      } catch (e) {
+       if (kDebugMode) {
+         print("Catch Exception: "+e.toString());
+       }
        return(e.toString());
      }
      return null;
