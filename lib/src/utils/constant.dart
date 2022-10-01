@@ -16,4 +16,6 @@ class Constant {
     r"([a-zA-Z0-9]*.{8,})$",
   );
 
+  //Message
+  static const textFixIssues = "Please fill the data correctly!";
 }

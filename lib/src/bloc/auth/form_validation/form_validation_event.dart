@@ -32,3 +32,5 @@ class GoogleButtonSubmitted extends FormValidationEvent {}
 class FacebookButtonSubmitted extends FormValidationEvent {}
 
 class AppleButtonSubmitted extends FormValidationEvent {}
+
+class FormSucceed extends FormValidationEvent {}

@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:restaurant_booking_app/src/bloc/auth/login/login_state.dart';
 import 'package:restaurant_booking_app/src/model/user.dart';
 import 'package:restaurant_booking_app/src/repositories/user_repository.dart';
 import 'package:restaurant_booking_app/src/utils/constant.dart';
@@ -107,6 +106,9 @@ class FormValidationBloc extends Bloc<FormValidationEvent, FormValidationState> 
               isFormValidateFailed: true
           ));
         }
+      }
+      if(event is FormSucceed){
+        emit(state.copyWith(isFormValidateSuccessful: true));
       }
     });
   }

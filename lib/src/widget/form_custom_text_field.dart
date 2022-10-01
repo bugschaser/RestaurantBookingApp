@@ -5,10 +5,10 @@ import '../theme/app_theme.dart';
 class FormCustomTextField extends StatelessWidget {
   final TextEditingController textEditingController;
   final String? Function(String?)? validator;
-  final String? Function(String?)? onSubmit;
+  final String? Function(String?)? onChange;
 
   const FormCustomTextField({Key? key,
-    required this.textEditingController, this.validator, this.onSubmit}) : super(key: key);
+    required this.textEditingController, this.validator, this.onChange}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +35,9 @@ class FormCustomTextField extends StatelessWidget {
               gapPadding: 2.0
           ),
         ),
+      autovalidateMode: AutovalidateMode.always,
       validator: validator,
-      onFieldSubmitted: onSubmit,
+      onChanged: onChange,
       );
   }
 }
