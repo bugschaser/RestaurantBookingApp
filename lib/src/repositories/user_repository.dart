@@ -81,7 +81,7 @@ class UserRepository{
        }
      } catch (e) {
        if (kDebugMode) {
-         print("Catch Exception: "+e.toString());
+         print("Catch Exception: $e");
        }
        return(e.toString());
      }

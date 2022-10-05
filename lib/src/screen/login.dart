@@ -32,27 +32,19 @@ class _LoginFormState extends State<LoginForm> {
         child: BlocProvider(
           create: (context) => LoginBloc(
               userRepository: RepositoryProvider.of<UserRepository>(context)),
-          child: Column(
-            children: [
-              SizedBox(
-                height: Constant.appBarHeight,
-              ),
-              Expanded(
-                  child: SingleChildScrollView(
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height - 100,
-                  child: BlocListener<LoginBloc, LoginState>(
-                    listener: (context, state) {
-                      // TODO: implement listener
-                      if (state.errorMessage.isNotEmpty) {
-                      } else if (state.isFormValid && !state.isLoading) {
-                        context.read<LoginBloc>().add(FormSucceed());
-                      } else if (state.isFormValidateFailed) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text(Constant.textFixIssues)));
-                      }
-                    },
+          child: MultiBlocListener(
+            listeners: [
+
+            ],
+            child: Column(
+              children: [
+                SizedBox(
+                  height: Constant.appBarHeight,
+                ),
+                Expanded(
+                    child: SingleChildScrollView(
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height - 100,
                     child: Column(
                       children: [
                         Padding(
@@ -83,75 +75,11 @@ class _LoginFormState extends State<LoginForm> {
                                   const SizedBox(
                                     height: 20,
                                   ),
-                                  Text(
-                                    'Email',
-                                    style: AppTheme
-                                        .lightTheme.textTheme.bodyText1
-                                        ?.copyWith(
-                                      color: AppColor.purpleColor,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  BlocBuilder<LoginBloc,
-                                      LoginState>(
-                                    buildWhen: (previous, current) =>
-                                        previous.email != current.email,
-                                    builder: (context, state) {
-                                      return FormCustomTextField(
-                                        textEditingController:
-                                            _emailTextEditingController,
-                                        onChange: (emailValue) {
-                                          context
-                                              .read<LoginBloc>()
-                                              .add(EmailChanged(
-                                                  email: emailValue ?? ''));
-                                        },
-                                        validator: (email) {
-                                          if (!state.isEmailValid) {
-                                            return "Please enter a correct email address.";
-                                          }
-                                          return null;
-                                        },
-                                      );
-                                    },
-                                  ),
+                                  _emailTextField(),
                                   const SizedBox(
                                     height: 30,
                                   ),
-                                  Text(
-                                    'Password',
-                                    style: AppTheme
-                                        .lightTheme.textTheme.bodyText1
-                                        ?.copyWith(
-                                      color: AppColor.purpleColor,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  BlocBuilder<LoginBloc,
-                                      LoginState>(
-                                    builder: (context, state) {
-                                      return FormCustomTextField(
-                                        textEditingController:
-                                            _passwordTextEditingController,
-                                        onChange: (password) {
-                                          context
-                                              .read<LoginBloc>()
-                                              .add(PasswordChanged(
-                                                  password: password ?? ''));
-                                        },
-                                        validator: (email) {
-                                          if (!state.isPasswordValid) {
-                                            return "Password length must have at least 8 characters.";
-                                          }
-                                          return null;
-                                        },
-                                      );
-                                    },
-                                  ),
+                                  _passwordTextField(),
                                   const SizedBox(
                                     height: 10,
                                   ),
@@ -240,8 +168,7 @@ class _LoginFormState extends State<LoginForm> {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (_) =>
-                                                    const SignUpPage()));
+                                                builder: (_) => SignUp()));
                                       },
                                       child: Text(
                                         'Sign Up',
@@ -263,12 +190,84 @@ class _LoginFormState extends State<LoginForm> {
                       ],
                     ),
                   ),
-                ),
-              ))
-            ],
+                ))
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+
+  Widget _emailTextField(){
+    return Column(
+      children: [
+        Text(
+          'Email',
+          style: AppTheme
+              .lightTheme.textTheme.bodyText1
+              ?.copyWith(
+            color: AppColor.purpleColor,
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        BlocBuilder<LoginBloc, LoginState>(
+          builder: (context, state) {
+            return FormCustomTextField(
+              onChange: (emailValue) {
+                context.read<LoginBloc>().add(
+                    EmailChanged(
+                        email: emailValue ?? ''));
+              },
+              validator: (email) {
+                if (!state.isEmailValid) {
+                  return "Please enter a correct email address.";
+                }
+                return null;
+              },
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _passwordTextField(){
+    return Column(
+      children: [
+        Text(
+          'Password',
+          style: AppTheme
+              .lightTheme.textTheme.bodyText1
+              ?.copyWith(
+            color: AppColor.purpleColor,
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        BlocBuilder<LoginBloc, LoginState>(
+          builder: (context, state) {
+            return FormCustomTextField(
+              onChange: (passwordValue) {
+                context.read<LoginBloc>().add(
+                    PasswordChanged(
+                        password:
+                        passwordValue ?? ''));
+              },
+              validator: (password) {
+                if (!state.isPasswordValid) {
+                  return "Password length must have at least 8 characters.";
+                }
+                return null;
+              },
+            );
+          },
+        ),
+      ],
+    );
+  }
+
 }

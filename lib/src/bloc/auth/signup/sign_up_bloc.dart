@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:restaurant_booking_app/src/bloc/auth/form_submission_status.dart';
@@ -37,7 +35,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
           isLoading: false
         ));
       }
-      else if(event is SignUpButtonSubmitted){
+      else if(event is  FormSubmitted){
         emit(state.copyWith(
           isFormValid: event.isFormValidate,
           formSubmissionStatus: FormSubmitting()
@@ -48,10 +46,15 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
             emit(state.copyWith(
                 isLoading: true
             ));
-            dynamic result = await _userRepository.createUserWithEmail(
-                email: state.email, password: state.password);
-
-
+            dynamic result;
+            if(event.status == Status.signUp){
+              result = await _userRepository.createUserWithEmail(
+                  email: state.email, password: state.password);
+            }
+            if(event.status == Status.signIn){
+              result = await _userRepository.signInWithEmail(
+                  email: state.email, password: state.password);
+            }
             if(result == null){
               emit(state.copyWith(
                   isLoading: false,
@@ -64,7 +67,6 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
                   isLoading: false,
                   isFormValid: false,
                   formSubmissionStatus: SubmissionSuccess(),
-                  msg: "User signed up successfully."
               ));
             }else if(result is String){
               emit(state.copyWith(

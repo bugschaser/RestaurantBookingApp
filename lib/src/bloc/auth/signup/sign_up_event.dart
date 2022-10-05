@@ -1,5 +1,7 @@
 part of 'sign_up_bloc.dart';
 
+enum Status { signIn, signUp }
+
 abstract class SignUpEvent extends Equatable {
   const SignUpEvent();
   @override
@@ -26,11 +28,12 @@ class ConfirmPasswordChanged extends SignUpEvent{
   List<Object> get props => [confirmPassword];
 }
 
-class SignUpButtonSubmitted extends SignUpEvent {
+class FormSubmitted extends SignUpEvent {
   final bool isFormValidate;
-  const SignUpButtonSubmitted({required this.isFormValidate});
+  final Status status;
+  const FormSubmitted( {required this.isFormValidate, required this.status});
   @override
-  List<Object> get props => [isFormValidate];
+  List<Object> get props => [isFormValidate,status];
 }
 
 class FormSucceed extends SignUpEvent {}
